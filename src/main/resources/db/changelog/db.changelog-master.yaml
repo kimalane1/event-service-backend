@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - include:
+      file: db/changelog/domain/event/001-create-event-table.sql
+  - include:
+      file: db/changelog/domain/person/001-create-person-table.sql
+  - include:
+      file: db/changelog/domain/event/002-create-event-registration-table.sql
