@@ -1,42 +1,58 @@
 # Event Registration Backend
 
 A backend system for managing event registrations, built with Spring Boot. 
-This application provides RESTful APIs for user authentication, event overview and registration handling.
+This application provides RESTful API for event handling.
 
 
 ## Tech Stack
 
 - **Backend Framework**: Spring Boot 3.5.6
-- **Security**: Spring Security with JWT
 - **Database**: H2 
 - **Build Tool**: Gradle
-- **Validation**: Hibernate Validator
 
 ## Prerequisites
 
 - Java 21
-- Gradle 8.14.13
-- Git
+- Gradle 8.x
 
-### Local Development
+### Local Development Environment
 
 1. Clone the repository:
    ```bash
    git clone https://github.com/kimalane1/event-registration-backend.git
    cd event-registration-backend
    ```
-
-2.  Database:
+2. Run the application using the Gradle Wrapper:
+   ```bash
+   ./gradlew bootRun
+   ```
+3. By default the application will be available at `http://localhost:8080`
+ 
+4. Database:
    - H2 in-memory database is configured by default
    - h2 console is enabled at `http://localhost:8080/h2-console`
    - tables are created automatically by Liquibase
 
-3. Build and run the application:
-   ```bash
-   ./gradlew bootRun
-   ```
+   - Andmemudel (ERD) [docs/erd.png](./docs/erd.png)
 
-4. The application will be available at `http://localhost:8080`
+5. Authentication:
+   - Spring Security and JWT is used for authentication
+   - admin credentials are:
+     - username: admin
+     - password: 1234
+   Credentials can be changed in `application.yml`
+
+### Docker
+
+```bash
+    docker build -t event-registration-backend .
+```
+```bash
+    docker run -p 8080:8080 event-registration-backend
+```
+This runs the application in a Docker container.
+Application will be available at `http://localhost:8080`
+
 
 
 
