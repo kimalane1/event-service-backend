@@ -4,6 +4,7 @@ import com.netgroup.event_registration_backend.domain.Event;
 import com.netgroup.event_registration_backend.dto.event.EventRequest;
 import com.netgroup.event_registration_backend.dto.event.EventResponse;
 import com.netgroup.event_registration_backend.exception.DuplicateEventException;
+import com.netgroup.event_registration_backend.mapper.EventMapper;
 import com.netgroup.event_registration_backend.repository.EventRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -13,23 +14,18 @@ import org.springframework.stereotype.Service;
 @Service
 public class EventService {
 
-  private final EventRepository eventRepository;
+  private final EventRepository repository;
 
   public void create(EventRequest request) {
-    if (eventRepository.existsByNameAndEventTime(request.name(), request.eventTime())) {
+    if (repository.existsByNameAndEventTime(request.name(), request.eventTime())) {
       throw new DuplicateEventException();
     }
-    Event event = Event.builder()
-        .name(request.name())
-        .eventTime(request.eventTime())
-        .maxPeople(request.maxPeople())
-        .build();
-
-    eventRepository.save(event);
+    Event event = EventMapper.toEntity(request);
+    repository.save(event);
   }
 
   public List<EventResponse> findAll() {
-    return eventRepository.findAll()
+    return repository.findAll()
         .stream()
         .map(e -> new EventResponse(
             e.getId(),
