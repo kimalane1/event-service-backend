@@ -6,9 +6,9 @@ import jakarta.validation.constraints.NotBlank;
 import java.time.ZonedDateTime;
 
 public record EventRequest(
-    @NotBlank String name,
-    @Future ZonedDateTime eventTime,
-    @Min(1) Integer maxPeople
+    @NotBlank(message = "Name should not be blank") String name,
+    @Future(message = "Event time should be in the future") ZonedDateTime eventTime,
+    @Min(value = 1, message = "Amount of people should be positive") Integer maxPeople
 ) {
 
 }

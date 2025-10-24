@@ -1,6 +1,5 @@
 package com.netgroup.event_registration_backend.service;
 
-import com.netgroup.event_registration_backend.domain.Event;
 import com.netgroup.event_registration_backend.dto.event.EventRequest;
 import com.netgroup.event_registration_backend.dto.event.EventResponse;
 import com.netgroup.event_registration_backend.exception.DuplicateEventException;
@@ -20,7 +19,7 @@ public class EventService {
     if (repository.existsByNameAndEventTime(request.name(), request.eventTime())) {
       throw new DuplicateEventException();
     }
-    Event event = EventMapper.toEntity(request);
+    var event = EventMapper.toEntity(request);
     repository.save(event);
   }
 

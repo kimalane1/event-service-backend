@@ -1,6 +1,5 @@
 package com.netgroup.event_registration_backend.service;
 
-import com.netgroup.event_registration_backend.domain.Event;
 import com.netgroup.event_registration_backend.domain.EventRegistration;
 import com.netgroup.event_registration_backend.domain.Person;
 import com.netgroup.event_registration_backend.dto.registration.RegistrationEventRequest;
@@ -24,10 +23,10 @@ public class EventRegistrationService {
 
   @Transactional
   public void register(Long eventId, RegistrationEventRequest request) {
-    Event event = eventRepository.findById(eventId)
+    var event = eventRepository.findById(eventId)
         .orElseThrow(() -> new EventNotFoundException(eventId));
 
-    Person person = personRepository.findByPersonalCode(request.personalCode())
+    var person = personRepository.findByPersonalCode(request.personalCode())
         .orElseGet(() -> personRepository.save(
             Person.builder()
                 .firstName(request.name())
@@ -40,12 +39,12 @@ public class EventRegistrationService {
       throw new DuplicateRegistrationException();
     }
 
-    int attendeesAmount = eventRegistrationRepository.countByEventId(eventId);
+    var attendeesAmount = eventRegistrationRepository.countByEventId(eventId);
     if (attendeesAmount >= event.getMaxPeople()) {
       throw new MaxPeopleExceededException();
     }
 
-    EventRegistration eventRegistration = EventRegistration.builder()
+    var eventRegistration = EventRegistration.builder()
         .event(event)
         .person(person)
         .build();

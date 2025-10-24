@@ -4,6 +4,7 @@ import com.netgroup.event_registration_backend.exception.DuplicateEventException
 import com.netgroup.event_registration_backend.exception.DuplicateRegistrationException;
 import com.netgroup.event_registration_backend.exception.EventNotFoundException;
 import com.netgroup.event_registration_backend.exception.MaxPeopleExceededException;
+import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
 
   @ExceptionHandler(EventNotFoundException.class)
   public ResponseEntity<String> handleEventNotFound(EventNotFoundException ex) {

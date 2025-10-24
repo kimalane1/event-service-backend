@@ -30,7 +30,7 @@ public class EventController {
 
   @GetMapping("/events")
   public ResponseEntity<List<EventResponse>> findAll() {
-    List<EventResponse> response = eventService.findAll();
+    var response = eventService.findAll();
     return ResponseEntity.ok(response);
   }
 }

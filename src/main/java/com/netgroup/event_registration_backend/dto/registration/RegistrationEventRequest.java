@@ -4,8 +4,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 public record RegistrationEventRequest(
-    @NotBlank String name,
-    @NotBlank String lastname,
+    @NotBlank(message = "Name should not be blank") String name,
+    @NotBlank(message = "Last name should not be blank") String lastname,
     @Size(min = 11, max = 11, message = "Personal code must be exactly 11 characters")
     @NotBlank String personalCode
 ) {
