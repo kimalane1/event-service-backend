@@ -1,6 +1,8 @@
 package com.netgroup.event_registration_backend.unit.controller;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import com.netgroup.event_registration_backend.controller.RegistrationEventController;
 import com.netgroup.event_registration_backend.service.EventRegistrationService;
@@ -51,8 +53,10 @@ public class EventRegistrationControllerTest {
     mockMvc.perform(post("/events/1/register")
             .contentType(MediaType.APPLICATION_JSON)
             .content(json))
-        .andExpect(status().isBadRequest());
+        .andExpect(status().isBadRequest())
+        .andExpect(content().string(containsString("Name should not be blank")));
   }
+
   @Test
   void register_whenPersonalCodeIsLong_shouldReturnBadRequest() throws Exception {
     String json = """
@@ -66,7 +70,8 @@ public class EventRegistrationControllerTest {
     mockMvc.perform(post("/events/1/register")
             .contentType(MediaType.APPLICATION_JSON)
             .content(json))
-        .andExpect(status().isBadRequest());
+        .andExpect(status().isBadRequest())
+        .andExpect(content().string(containsString("Personal code must be exactly 11 characters")));
   }
 
   @Test
@@ -82,6 +87,7 @@ public class EventRegistrationControllerTest {
     mockMvc.perform(post("/events/1/register")
             .contentType(MediaType.APPLICATION_JSON)
             .content(json))
-        .andExpect(status().isBadRequest());
+        .andExpect(status().isBadRequest())
+        .andExpect(content().string(containsString("Personal code must be exactly 11 characters")));
   }
 }
