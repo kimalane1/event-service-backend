@@ -19,4 +19,10 @@ public class EventFixture {
     event.setEventTime(eventTime);
     return event;
   }
+
+  public static Event withMaxPeople(int maxPeople) {
+    Event event = event();
+    event.setMaxPeople(maxPeople);
+    return event;
+  }
 }
