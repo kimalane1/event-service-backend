@@ -86,8 +86,6 @@ public class EventRegistrationRepositoryIT extends BaseIntegrationTest {
         EventRegistrationFixture.withEventAndPerson(event, person));
     var registration2 = EventRegistrationFixture.withEventAndPerson(event, person);
 
-    assertThrows(DataIntegrityViolationException.class, () -> {
-      eventRegistrationRepository.saveAndFlush(registration2);
-    });
+    assertThrows(DataIntegrityViolationException.class, () -> eventRegistrationRepository.saveAndFlush(registration2));
   }
 }
