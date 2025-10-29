@@ -13,15 +13,15 @@ import org.springframework.dao.DataIntegrityViolationException;
 public class PersonRepositoryIT extends BaseIntegrationTest {
 
   @Autowired
-  PersonRepository personRepository;
+  PersonRepository repository;
 
   @Test
   void shouldFindPersonByPersonalCode() {
     var personalCode = "49303061234";
     var createdPerson = PersonFixture.withCode(personalCode);
-    personRepository.save(createdPerson);
+    repository.save(createdPerson);
 
-    var foundPerson = personRepository.findByPersonalCode(personalCode);
+    var foundPerson = repository.findByPersonalCode(personalCode);
     var person = foundPerson.orElseThrow();
     assertEquals(personalCode, person.getPersonalCode());
     assertEquals(createdPerson.getFirstName(), person.getFirstName());
@@ -29,7 +29,7 @@ public class PersonRepositoryIT extends BaseIntegrationTest {
 
   @Test
   void shouldReturnEmptyWhenNoPersonIsFound() {
-    var foundPerson = personRepository.findByPersonalCode("NOPE");
+    var foundPerson = repository.findByPersonalCode("NOPE");
     assertTrue(foundPerson.isEmpty());
   }
 
@@ -37,12 +37,12 @@ public class PersonRepositoryIT extends BaseIntegrationTest {
   void shouldThrowDataIntegrityViolationExceptionWhenPersonAlreadyExists() {
     var personalCode = "49303061234";
     var createdPerson = PersonFixture.withCode(personalCode);
-    personRepository.save(createdPerson);
+    repository.save(createdPerson);
 
     var duplicate = PersonFixture.withCode(personalCode);
     assertThrows(
         DataIntegrityViolationException.class,
-        () -> personRepository.saveAndFlush(duplicate)
+        () -> repository.saveAndFlush(duplicate)
     );
   }
 }

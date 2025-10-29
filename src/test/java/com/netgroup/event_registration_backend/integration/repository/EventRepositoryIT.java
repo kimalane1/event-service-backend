@@ -15,7 +15,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 public class EventRepositoryIT extends BaseIntegrationTest {
 
   @Autowired
-  EventRepository eventRepository;
+  EventRepository repository;
 
   @Test
   void shouldReturnTrueWhenEventExistsByNameAndEventTime() {
@@ -26,14 +26,14 @@ public class EventRepositoryIT extends BaseIntegrationTest {
         0,
         ZoneId.of("Europe/Tallinn"));
     var createdEvent = EventFixture.withNameAndEventTime(name, eventTime);
-    eventRepository.save(createdEvent);
+    repository.save(createdEvent);
 
-    assertTrue(eventRepository.existsByNameAndEventTime(name, eventTime));
+    assertTrue(repository.existsByNameAndEventTime(name, eventTime));
   }
 
   @Test
   void shouldReturnFalseWhenEventExistsByNameAndEventTime() {
-    assertFalse(eventRepository.existsByNameAndEventTime("NONE", ZonedDateTime.now()));
+    assertFalse(repository.existsByNameAndEventTime("NONE", ZonedDateTime.now()));
   }
 
   @Test
@@ -41,12 +41,12 @@ public class EventRepositoryIT extends BaseIntegrationTest {
     var eventTime = ZonedDateTime.of(2030, 10, 10, 12, 0, 0, 0, ZoneId.of("UTC"));
 
     var event = EventFixture.withNameAndEventTime("B-day", eventTime);
-    eventRepository.saveAndFlush(event);
+    repository.saveAndFlush(event);
 
     var duplicate = EventFixture.withNameAndEventTime("B-day", eventTime);
 
     assertThrows(DataIntegrityViolationException.class,
-        () -> eventRepository.saveAndFlush(duplicate)
+        () -> repository.saveAndFlush(duplicate)
     );
   }
 
