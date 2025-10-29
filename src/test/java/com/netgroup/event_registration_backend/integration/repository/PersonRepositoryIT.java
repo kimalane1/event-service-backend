@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.netgroup.event_registration_backend.integration.BaseIntegrationTest;
-import com.netgroup.event_registration_backend.integration.fixtures.PersonFixture;
+import com.netgroup.event_registration_backend.integration.fixtures.domain.PersonFixture;
 import com.netgroup.event_registration_backend.repository.PersonRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

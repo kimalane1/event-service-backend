@@ -1,4 +1,4 @@
-package com.netgroup.event_registration_backend.integration.fixtures;
+package com.netgroup.event_registration_backend.integration.fixtures.domain;
 
 import com.netgroup.event_registration_backend.domain.Event;
 import com.netgroup.event_registration_backend.domain.EventRegistration;

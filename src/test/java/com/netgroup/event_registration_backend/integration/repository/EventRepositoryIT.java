@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.netgroup.event_registration_backend.integration.BaseIntegrationTest;
-import com.netgroup.event_registration_backend.integration.fixtures.EventFixture;
+import com.netgroup.event_registration_backend.integration.fixtures.domain.EventFixture;
 import com.netgroup.event_registration_backend.repository.EventRepository;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
