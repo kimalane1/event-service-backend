@@ -14,16 +14,9 @@ public class EventRegistrationFixture {
   }
 
   public static EventRegistration withEventAndPerson(Event event, Person person) {
-    return EventRegistration.builder()
-        .event(event)
-        .person(person)
-        .registeredAt(ZonedDateTime.now())
-        .build();
-  }
-
-  public static EventRegistration withEventTime(ZonedDateTime eventTime) {
     EventRegistration eventRegistration = eventRegistration();
-    eventRegistration.setRegisteredAt(eventTime);
+    eventRegistration.setEvent(event);
+    eventRegistration.setPerson(person);
     return eventRegistration;
   }
 }
