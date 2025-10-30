@@ -10,7 +10,6 @@ import com.netgroup.event_registration_backend.integration.fixtures.dto.EventReq
 import com.netgroup.event_registration_backend.repository.EventRepository;
 import com.netgroup.event_registration_backend.service.EventService;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +33,7 @@ public class EventServiceIT extends BaseIntegrationTest {
     var createdEvent = repository.findAll().stream().findFirst().orElseThrow();
 
     assertEquals(request.name(), createdEvent.getName());
-    assertEquals(request.eventTime().withZoneSameInstant(ZoneOffset.UTC),
+    assertEquals(request.eventTime(),
         createdEvent.getEventTime());
     assertEquals(request.maxPeople(), createdEvent.getMaxPeople());
   }
@@ -62,7 +61,7 @@ public class EventServiceIT extends BaseIntegrationTest {
 
     var event = events.getFirst();
     assertEquals(request.name(), event.name());
-    assertEquals(request.eventTime().withZoneSameInstant(ZoneOffset.UTC), event.eventTime());
+    assertEquals(request.eventTime(), event.eventTime());
     assertEquals(request.maxPeople(), event.maxPeople());
   }
 
