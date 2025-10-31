@@ -19,6 +19,7 @@ import com.netgroup.event_registration_backend.repository.PersonRepository;
 import com.netgroup.event_registration_backend.service.EventRegistrationService;
 import java.time.ZonedDateTime;
 import java.util.Optional;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -45,9 +46,9 @@ public class EventRegistrationServiceTest {
   @Captor
   private ArgumentCaptor<EventRegistration> eventCaptor;
 
-
+  @DisplayName("Should save event when event does not exist and person exists")
   @Test
-  void register_whenEventDoesNotExistAndPersonExists_shouldSaveEvent() {
+  void register_whenEventDoesNotExistAndPersonExists_savesEvent() {
     var event = Event.builder().id(1L).name("B-day").eventTime(ZonedDateTime.now()).maxPeople(10)
         .build();
     var person = Person.builder().id(1L).firstName("John").lastName("Doe")
@@ -70,8 +71,9 @@ public class EventRegistrationServiceTest {
     assertEquals(person.getId(), saved.getPerson().getId());
   }
 
+  @DisplayName("Should register event when event and person does not exist")
   @Test
-  void register_whenEventDoesNotExistAndPersonDoesNotExist_shouldSaveEvent() {
+  void register_whenEventAndPersonDoesNotExist_savesEvent() {
     var event = Event.builder().id(1L).name("B-day").eventTime(ZonedDateTime.now()).maxPeople(10)
         .build();
     var createdPerson = Person.builder().id(1L).firstName("John").lastName("Doe")
@@ -98,8 +100,9 @@ public class EventRegistrationServiceTest {
     assertEquals(createdPerson.getId(), saved.getPerson().getId());
   }
 
+  @DisplayName("Should throw exception when event does not exist ")
   @Test
-  void register_whenEventDoesNotExist_shouldThrowException() {
+  void register_whenEventDoesNotExist_throwsException() {
     when(eventRepository.findById(any()))
         .thenReturn(Optional.empty());
 
@@ -112,8 +115,9 @@ public class EventRegistrationServiceTest {
     verify(eventRegistrationRepository, never()).save(any());
   }
 
+  @DisplayName("Should throw exception when event registration already exists")
   @Test
-  void register_whenEventRegistrationAlreadyExists_shouldThrowException() {
+  void register_whenEventRegistrationExists_throwsException() {
     var event = Event.builder().id(1L).name("B-day").eventTime(ZonedDateTime.now()).maxPeople(10)
         .build();
     var person = Person.builder().id(1L).firstName("John").lastName("Doe")
@@ -135,8 +139,9 @@ public class EventRegistrationServiceTest {
     verify(eventRegistrationRepository, never()).save(any());
   }
 
+  @DisplayName("Should throw exception when max people reached")
   @Test
-  void register_whenMaxPeopleReached_shouldThrowException() {
+  void register_whenMaxPeopleReached_throwsException() {
     var event = Event.builder().id(1L).name("B-day").eventTime(ZonedDateTime.now()).maxPeople(1)
         .build();
     var person = Person.builder().id(1L).firstName("John").lastName("Doe")

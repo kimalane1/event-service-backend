@@ -1,5 +1,6 @@
 package com.netgroup.event_registration_backend.integration.service;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import com.netgroup.event_registration_backend.exception.DuplicateRegistrationException;
@@ -14,6 +15,7 @@ import com.netgroup.event_registration_backend.repository.EventRepository;
 import com.netgroup.event_registration_backend.repository.PersonRepository;
 import com.netgroup.event_registration_backend.service.EventRegistrationService;
 import jakarta.transaction.Transactional;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -32,8 +34,9 @@ public class EventRegistrationServiceIT extends BaseIntegrationTest {
   @Autowired
   EventRegistrationService eventRegistrationService;
 
+  @DisplayName("Should create event registration when event and person exists")
   @Test
-  void shouldCreateEventRegistrationWhenEventAndPersonExists() {
+  void register_whenEventAndPersonExists_createsEventRegistration() {
     var event = eventRepository.save(EventFixture.event());
     var person = personRepository.save(PersonFixture.person());
     var request = RegistrationEventRequestFixture.withPersonalCode(person.getPersonalCode());
@@ -45,30 +48,33 @@ public class EventRegistrationServiceIT extends BaseIntegrationTest {
   }
 
 
+  @DisplayName("Should create person and event registration when person not exists")
   @Test
-  void shouldCreatePersonAndEventRegistrationWhenPersonNotExists() {
+  void register_whenPersonNotExists_createsPersonAndEventRegistration() {
     var event = eventRepository.save(EventFixture.event());
     var request = RegistrationEventRequestFixture.request();
     eventRegistrationService.register(event.getId(), request);
 
     var person = personRepository.findByPersonalCode(request.personalCode()).orElseThrow();
     var registration = eventRegistrationRepository.findAll().getFirst();
+
     assertEquals(event.getId(), registration.getEvent().getId());
-    assertEquals(person.getId(), registration.getPerson().getId());
-    assertEquals(person.getFirstName(), registration.getPerson().getFirstName());
-    assertEquals(person.getLastName(), registration.getPerson().getLastName());
-    assertEquals(person.getPersonalCode(), registration.getPerson().getPersonalCode());
+    assertThat(person)
+        .usingRecursiveComparison()
+        .isEqualTo(registration.getPerson());
   }
 
+  @DisplayName("Should throw exception when event not exists")
   @Test
-  void shouldThrowEventNotFoundExceptionWhenEventNotExists() {
+  void register_whenEventNotExists_throwsEventNotFoundException() {
     var request = RegistrationEventRequestFixture.request();
     assertThrows(EventNotFoundException.class,
         () -> eventRegistrationService.register(Long.MAX_VALUE, request));
   }
 
+  @DisplayName("Should throw exception when registration already exists")
   @Test
-  void shouldThrowDuplicateRegistrationExceptionWhenRegistrationExists() {
+  void register_whenRegistrationExists_throwsDuplicateRegistrationException() {
     var event = eventRepository.save(EventFixture.event());
     var request = RegistrationEventRequestFixture.request();
     eventRegistrationService.register(event.getId(), request);
@@ -77,8 +83,9 @@ public class EventRegistrationServiceIT extends BaseIntegrationTest {
         () -> eventRegistrationService.register(event.getId(), request));
   }
 
+  @DisplayName("Should throw exception when event max people is exceeded")
   @Test
-  void shouldThrowMaxPeopleExceededExceptionWhenEventIsFull() {
+  void register_whenEventMaxPeopleIsRegistered_throwsMaxPeopleExceededExceptionW() {
     var event = eventRepository.save(EventFixture.withMaxPeople(1));
     var request1 = RegistrationEventRequestFixture.request();
     eventRegistrationService.register(event.getId(), request1);

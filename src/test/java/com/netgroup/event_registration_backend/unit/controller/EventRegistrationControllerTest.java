@@ -6,6 +6,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import com.netgroup.event_registration_backend.controller.RegistrationEventController;
 import com.netgroup.event_registration_backend.service.EventRegistrationService;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -24,8 +25,9 @@ public class EventRegistrationControllerTest {
   @MockitoBean
   EventRegistrationService registrationService;
 
+  @DisplayName("Should return HTTP 201 Created when registration is successful")
   @Test
-  void register_whenAllFieldsFilled_shouldReturnCreated() throws Exception {
+  void register_whenAllFieldsFilled_returnsCreated() throws Exception {
     String json = """
         {
             "name": "John",
@@ -40,8 +42,9 @@ public class EventRegistrationControllerTest {
         .andExpect(status().isCreated());
   }
 
+  @DisplayName("Should return HTTP 400 Bad Request when name is blank")
   @Test
-  void register_whenNameIsBlank_shouldReturnBadRequest() throws Exception {
+  void register_whenNameIsBlank_returnsBadRequest() throws Exception {
     String json = """
         {
             "name": "",
@@ -57,8 +60,9 @@ public class EventRegistrationControllerTest {
         .andExpect(content().string(containsString("Name should not be blank")));
   }
 
+  @DisplayName("Should return HTTP 400 Bad Request when personal code is more than 11 characters")
   @Test
-  void register_whenPersonalCodeIsLong_shouldReturnBadRequest() throws Exception {
+  void register_whenPersonalCodeMoreThanElevenChars_returnsBadRequest() throws Exception {
     String json = """
         {
             "name": "John",
@@ -74,8 +78,9 @@ public class EventRegistrationControllerTest {
         .andExpect(content().string(containsString("Personal code must be exactly 11 characters")));
   }
 
+  @DisplayName("Should return HTTP 400 Bad Request when personal code is less than 11 characters")
   @Test
-  void register_whenPersonalCodeIsShort_shouldReturnBadRequest() throws Exception {
+  void register_whenPersonalCodeLessThanElevenChars_returnsBadRequest() throws Exception {
     String json = """
         {
             "name": "John",

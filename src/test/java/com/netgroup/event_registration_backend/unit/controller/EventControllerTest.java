@@ -6,6 +6,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import com.netgroup.event_registration_backend.controller.EventController;
 import com.netgroup.event_registration_backend.service.EventService;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -24,8 +25,9 @@ public class EventControllerTest {
   @MockitoBean
   EventService eventService;
 
+  @DisplayName("Should return HTTP 201 Created when event is created successfully")
   @Test
-  void create_whenAllFieldsFilled_shouldReturnCreated() throws Exception {
+  void create_whenAllFieldsFilled_returnsCreated() throws Exception {
     String json = """
         {
             "name": "Party",
@@ -40,8 +42,9 @@ public class EventControllerTest {
         .andExpect(status().isCreated());
   }
 
+  @DisplayName("Should return HTTP 400 Bad Request when name is blank")
   @Test
-  void create_whenNameIsBlank_shouldReturnBadRequest() throws Exception {
+  void create_whenNameIsBlank_returnsBadRequest() throws Exception {
     String json = """
         {
             "name": "",
@@ -57,8 +60,9 @@ public class EventControllerTest {
         .andExpect(content().string(containsString("Name should not be blank")));
   }
 
+  @DisplayName("Should return HTTP 400 Bad Request when event time is in the past")
   @Test
-  void create_whenEventTimeIsPast_shouldReturnBadRequest() throws Exception {
+  void create_whenEventTimeIsPast_returnsBadRequest() throws Exception {
     String json = """
         {
             "name": "John",
@@ -74,8 +78,9 @@ public class EventControllerTest {
         .andExpect(content().string(containsString("Event time should be in the future")));
   }
 
+  @DisplayName("Should return HTTP 400 Bad Request when max people is negative")
   @Test
-  void create_whenEventMaxPeopleIsNegative_shouldReturnBadRequest() throws Exception {
+  void create_whenEventMaxPeopleIsNegative_returnsBadRequest() throws Exception {
     String json = """
         {
             "name": "John",
@@ -89,8 +94,6 @@ public class EventControllerTest {
             .content(json))
         .andExpect(status().isBadRequest())
         .andExpect(content().string(containsString("Amount of people should be positive")));
-
-
   }
 
 

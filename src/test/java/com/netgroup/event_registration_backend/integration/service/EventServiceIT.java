@@ -1,9 +1,12 @@
 package com.netgroup.event_registration_backend.integration.service;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import com.netgroup.event_registration_backend.domain.Event;
+import com.netgroup.event_registration_backend.dto.event.EventResponse;
 import com.netgroup.event_registration_backend.exception.DuplicateEventException;
 import com.netgroup.event_registration_backend.integration.BaseIntegrationTest;
 import com.netgroup.event_registration_backend.integration.fixtures.dto.EventRequestFixture;
@@ -11,6 +14,7 @@ import com.netgroup.event_registration_backend.repository.EventRepository;
 import com.netgroup.event_registration_backend.service.EventService;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -22,8 +26,9 @@ public class EventServiceIT extends BaseIntegrationTest {
   @Autowired
   EventService service;
 
+  @DisplayName("Should create event when preconditions are met")
   @Test
-  void shouldCreateEventWhenEverythingIsOK() {
+  void create_whenPreconditionsMet_createsRegistration() {
     var request = EventRequestFixture.request();
     service.create(request);
 
@@ -32,14 +37,20 @@ public class EventServiceIT extends BaseIntegrationTest {
 
     var createdEvent = repository.findAll().stream().findFirst().orElseThrow();
 
-    assertEquals(request.name(), createdEvent.getName());
-    assertEquals(request.eventTime(),
-        createdEvent.getEventTime());
-    assertEquals(request.maxPeople(), createdEvent.getMaxPeople());
+    assertThat(createdEvent)
+        .extracting(
+            Event::getName,
+            Event::getEventTime,
+            Event::getMaxPeople)
+        .containsExactly(
+            request.name(),
+            request.eventTime(),
+            request.maxPeople());
   }
 
+  @DisplayName("Should throw exception when event already exists")
   @Test
-  void shouldThrowExceptionWhenEventAlreadyExists() {
+  void create_whenEventExists_throwsDuplicateEventException() {
     var eventTime = ZonedDateTime.of(2030, 10, 10, 12, 0, 0, 0, ZoneId.of("UTC"));
     var request = EventRequestFixture.withTimeAndCode(eventTime, 10);
 
@@ -51,7 +62,7 @@ public class EventServiceIT extends BaseIntegrationTest {
   }
 
   @Test
-  void shouldReturnAllEventsWhenEventsExist() {
+  void findAll_whenEventsExist_returnsAllEvents() {
     var request = EventRequestFixture.request();
     service.create(request);
 
@@ -60,13 +71,21 @@ public class EventServiceIT extends BaseIntegrationTest {
     assertEquals(1, events.size());
 
     var event = events.getFirst();
-    assertEquals(request.name(), event.name());
-    assertEquals(request.eventTime(), event.eventTime());
-    assertEquals(request.maxPeople(), event.maxPeople());
+
+    assertThat(event)
+        .extracting(
+            EventResponse::name,
+            EventResponse::eventTime,
+            EventResponse::maxPeople)
+        .containsExactly(
+            request.name(),
+            request.eventTime(),
+            request.maxPeople());
   }
 
+  @DisplayName("Should return empty list when nothing exists")
   @Test
-  void shouldReturnEmptyListWhenNothingExists() {
+  void findAll_whenNothingExists_returnsEmptyList() {
     assertTrue(service.findAll().isEmpty());
   }
 

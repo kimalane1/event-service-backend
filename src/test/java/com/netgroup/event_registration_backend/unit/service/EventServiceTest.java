@@ -1,6 +1,8 @@
 package com.netgroup.event_registration_backend.unit.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.tuple;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -15,6 +17,7 @@ import com.netgroup.event_registration_backend.repository.EventRepository;
 import com.netgroup.event_registration_backend.service.EventService;
 import java.time.ZonedDateTime;
 import java.util.List;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -35,21 +38,25 @@ public class EventServiceTest {
   @Captor
   private ArgumentCaptor<Event> eventCaptor;
 
+  @DisplayName("Should create event when event is not present")
   @Test
-  void createEvent_whenEventIsNotPresent_shouldCreateEvent() {
+  void create_whenEventIsNotPresent_createsEvent() {
     EventRequest request = new EventRequest("B-day", ZonedDateTime.now(), 10);
     when(eventRepository.existsByNameAndEventTime(request.name(), request.eventTime()))
         .thenReturn(false);
     eventService.create(request);
     verify(eventRepository).save(eventCaptor.capture());
     Event createdEvent = eventCaptor.getValue();
-    assertEquals(request.name(), createdEvent.getName());
-    assertEquals(request.eventTime(), createdEvent.getEventTime());
-    assertEquals(request.maxPeople(), createdEvent.getMaxPeople());
+    assertAll(
+        () -> assertEquals(request.name(), createdEvent.getName()),
+        () -> assertEquals(request.eventTime(), createdEvent.getEventTime()),
+        () -> assertEquals(request.maxPeople(), createdEvent.getMaxPeople())
+    );
   }
 
+  @DisplayName("Should throw exception when event is present")
   @Test
-  void createEvent_whenEventIsPresent_shouldThrowException() {
+  void create_whenEventIsPresent_throwsException() {
     EventRequest request = new EventRequest("B-day", ZonedDateTime.now(), 10);
     when(eventRepository.existsByNameAndEventTime(request.name(), request.eventTime()))
         .thenReturn(true);
@@ -57,8 +64,9 @@ public class EventServiceTest {
     verify(eventRepository, never()).save(any());
   }
 
+  @DisplayName("Should return all events when all events are present")
   @Test
-  void findAll_whenAllEventsArePresent_shouldReturnEvents() {
+  void findAll_whenAllEventsArePresent_returnsEvents() {
     Event event = Event.builder()
         .id(1L)
         .name("B-day")
@@ -69,13 +77,19 @@ public class EventServiceTest {
         .thenReturn(List.of(event));
     var result = eventService.findAll();
     assertEquals(1, result.size());
-    assertThat(result).extracting(EventResponse::name).containsExactly("B-day");
-    assertThat(result).extracting(EventResponse::maxPeople).containsExactly(10);
+    assertThat(result)
+        .extracting(
+            EventResponse::name,
+            EventResponse::maxPeople)
+        .containsExactly(tuple(
+            "B-day",
+            10));
     verify(eventRepository).findAll();
   }
 
+  @DisplayName("Should return empty list when no events are present")
   @Test
-  void findAll_whenNoEventsArePresent_shouldReturnEmptyList() {
+  void findAll_whenNoEventsArePresent_returnsEmptyList() {
     when(eventRepository.findAll()).thenReturn(List.of());
     var result = eventService.findAll();
     assertEquals(0, result.size());

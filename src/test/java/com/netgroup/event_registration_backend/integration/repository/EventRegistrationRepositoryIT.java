@@ -1,8 +1,9 @@
 package com.netgroup.event_registration_backend.integration.repository;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.netgroup.event_registration_backend.integration.BaseIntegrationTest;
@@ -13,6 +14,7 @@ import com.netgroup.event_registration_backend.repository.EventRegistrationRepos
 import com.netgroup.event_registration_backend.repository.EventRepository;
 import com.netgroup.event_registration_backend.repository.PersonRepository;
 import java.util.List;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -28,8 +30,9 @@ public class EventRegistrationRepositoryIT extends BaseIntegrationTest {
   @Autowired
   EventRegistrationRepository eventRegistrationRepository;
 
+  @DisplayName("Should return true when event exists")
   @Test
-  void shouldReturnTrueWhenEventExistsByEventIdAndPersonId() {
+  void existsByEventIdAndPersonId_whenEventExists_returnsTrue() {
     var person = personRepository.save(PersonFixture.person());
     var event = eventRepository.save(EventFixture.event());
 
@@ -37,20 +40,24 @@ public class EventRegistrationRepositoryIT extends BaseIntegrationTest {
         EventRegistrationFixture.withEventAndPerson(event, person)
     );
 
-    assertNotNull(person.getId());
-    assertNotNull(event.getId());
-    assertNotNull(registration.getId());
+    assertAll("entity persistence",
+        () -> assertThat(person.getId()).isNotNull(),
+        () -> assertThat(event.getId()).isNotNull(),
+        () -> assertThat(registration.getId()).isNotNull()
+    );
     assertTrue(
         eventRegistrationRepository.existsByEventIdAndPersonId(event.getId(), person.getId()));
   }
 
+  @DisplayName("Should return false when event not exists")
   @Test
-  void shouldReturnFalseWhenEventNotExistsByEventIdAndPersonId() {
+  void existsByEventIdAndPersonId_whenEventNotExists_returnsFalse() {
     assertFalse(
         eventRegistrationRepository.existsByEventIdAndPersonId(Long.MAX_VALUE, Long.MAX_VALUE));
   }
 
 
+  @DisplayName("Should return registrations count when event exists")
   @Test
   void shouldReturnRegistrationsCountWhenEventExists() {
     var event = eventRepository.save(EventFixture.event());
@@ -86,6 +93,7 @@ public class EventRegistrationRepositoryIT extends BaseIntegrationTest {
         EventRegistrationFixture.withEventAndPerson(event, person));
     var registration2 = EventRegistrationFixture.withEventAndPerson(event, person);
 
-    assertThrows(DataIntegrityViolationException.class, () -> eventRegistrationRepository.saveAndFlush(registration2));
+    assertThrows(DataIntegrityViolationException.class,
+        () -> eventRegistrationRepository.saveAndFlush(registration2));
   }
 }
